@@ -19,6 +19,7 @@ Parser and main handler of this utility. Consume the `functions.py` module.
 import argparse
 import sys
 
+from colorama import Fore, Style
 from ilock import ILock, ILockException
 
 from journal_writer.functions import *
@@ -99,7 +100,7 @@ if __name__ == "__main__":
     try:
         args = parser.parse_args()
     except argparse.ArgumentError:
-        print("[PARSE ERROR] Revise command.")
+        print(Fore.RED + "[PARSE ERROR]" + Style.RESET_ALL + " Revise command.")
         sys.exit(1)
 
     # Fix journal file name
@@ -110,7 +111,12 @@ if __name__ == "__main__":
 
     # Check journal file existence
     if not os.path.isfile(journal_file):
-        print(f"[CONFIG ERROR] Journal file in '{journal_file}' unreachable.")
+        print(
+            Fore.RED
+            + "[CONFIG ERROR]"
+            + Style.RESET_ALL
+            + f" Journal file in '{journal_file}' unreachable."
+        )
         sys.exit(1)
 
     # Check options and run. Sometimes this script is called by system daemons
@@ -150,5 +156,10 @@ if __name__ == "__main__":
             elif args.remove:
                 remove_last_line(journal_file)
     except ILockException:
-        print("[CONCURRENCY ERROR] Timeout was reached, but the lock wasn't acquired.")
+        print(
+            Fore.RED
+            + "[CONCURRENCY ERROR]"
+            + Style.RESET_ALL
+            + " Timeout was reached, but the lock wasn't acquired."
+        )
         sys.exit(1)
