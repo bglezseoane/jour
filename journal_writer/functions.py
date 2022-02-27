@@ -12,6 +12,7 @@ Functions module
 ================
 
 This module closures the function definitions used along these package.
+Exceptions directly raised to caller.
 """
 
 import datetime
@@ -160,8 +161,8 @@ def calculate_next_line_index(journal_file: str) -> str:
     try:
         return str(int(last_line.split(".")[0]) + 1)
     except:
-        raise OSError(
-            f"The last line of {journal_file} is not well-formed. "
+        raise Exception(
+            f"The last line of '{journal_file}' is not well-formed. "
             f"The script can not handles this situation. Check it "
             f"manually."
         )

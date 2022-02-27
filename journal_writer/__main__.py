@@ -163,3 +163,8 @@ if __name__ == "__main__":
             + " Timeout was reached, but the lock wasn't acquired."
         )
         sys.exit(1)
+    except Exception as e:
+        print(
+            Fore.RED + "[RUNTIME ERROR]" + Style.RESET_ALL + " Exception raised: '{e}'"
+        )
+        sys.exit(1)
