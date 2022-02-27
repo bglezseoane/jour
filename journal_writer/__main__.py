@@ -19,6 +19,8 @@ Parser and main handler of this utility. Consume the `functions.py` module.
 import argparse
 import sys
 
+from ilock import ILock, ILockException
+
 from journal_writer.functions import *
 
 if __name__ == "__main__":
@@ -111,33 +113,42 @@ if __name__ == "__main__":
         print(f"[CONFIG ERROR] Journal file in '{journal_file}' unreachable.")
         sys.exit(1)
 
-    # Check options and run
-    if (
-        not args.save
-        and not args.append
-        and not args.tag
-        and not args.return_tag
-        and not args.save_and_tag
-        and not args.remove
-    ):  # Printing is the default option. Multiple options at once disabled since parser
-        print_journal(journal_file)
-    elif args.save:
-        save_line(journal_file, " ".join(args.save), as_command=args.command)
-    elif args.append:
-        append_to_last_line(
-            journal_file, " ".join(args.append), as_command=args.command
-        )
-    elif args.tag:
-        tag_last_line(journal_file, args.tag[0])
-    elif args.return_tag:
-        return_next_tag(journal_file, args.return_tag[0])
-    elif args.save_and_tag:
-        save_line(
-            journal_file,
-            " ".join(args.save_and_tag[1:]),
-            as_command=args.command,
-            printing=False,
-        )
-        tag_last_line(journal_file, args.save_and_tag[0])
-    elif args.remove:
-        remove_last_line(journal_file)
+    # Check options and run. Sometimes this script is called by system daemons
+    # almost at the same time, so the file can be corrupted by mixing up the
+    # line numbers or adding tags to other subsequent messages. So it is
+    # necessary to control script concurrent usages. This lock the use since this
+    # current script, not the file itself
+    try:
+        with ILock("journal_writer", timeout=5 * 60):  # 5 minutes timeout
+            if (
+                not args.save
+                and not args.append
+                and not args.tag
+                and not args.return_tag
+                and not args.save_and_tag
+                and not args.remove
+            ):  # Printing is the default option. Multiple options at once disabled since parser
+                print_journal(journal_file)
+            elif args.save:
+                save_line(journal_file, " ".join(args.save), as_command=args.command)
+            elif args.append:
+                append_to_last_line(
+                    journal_file, " ".join(args.append), as_command=args.command
+                )
+            elif args.tag:
+                tag_last_line(journal_file, args.tag[0])
+            elif args.return_tag:
+                return_next_tag(journal_file, args.return_tag[0])
+            elif args.save_and_tag:
+                save_line(
+                    journal_file,
+                    " ".join(args.save_and_tag[1:]),
+                    as_command=args.command,
+                    printing=False,
+                )
+                tag_last_line(journal_file, args.save_and_tag[0])
+            elif args.remove:
+                remove_last_line(journal_file)
+    except ILockException:
+        print("[CONCURRENCY ERROR] Timeout was reached, but the lock wasn't acquired.")
+        sys.exit(1)
