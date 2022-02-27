@@ -149,6 +149,16 @@ if __name__ == "__main__":
         )
         sys.exit(1)
 
+    # Warning if emergency journal exist, if not already warning
+    if not using_emergency_journal:
+        print(
+            Fore.YELLOW
+            + "[WARNING]"
+            + Style.RESET_ALL
+            + f" Emergency journal file in '{EMERGENCY_JOURNAL}' pending to be "
+            f"merged with main journal."
+        )
+
     # Check options and run. Sometimes this script is called by system daemons
     # almost at the same time, so the file can be corrupted by mixing up the
     # line numbers or adding tags to other subsequent messages. So it is
