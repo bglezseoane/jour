@@ -25,7 +25,7 @@ from ilock import ILock, ILockException
 from journal_writer.functions import *
 
 
-if __name__ == "__main__":
+def main():
     # Define the parser
     parser = argparse.ArgumentParser(
         prog="Journal Writer",
@@ -224,3 +224,7 @@ if __name__ == "__main__":
             Fore.RED + "[RUNTIME ERROR]" + Style.RESET_ALL + " Exception raised: '{e}'"
         )
         sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()
