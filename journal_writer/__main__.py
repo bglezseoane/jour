@@ -172,9 +172,15 @@ if __name__ == "__main__":
                     journal_file, " ".join(args.append), as_command=args.command
                 )
             elif args.tag:
-                tag_last_line(journal_file, args.tag[0])
+                tag_last_line(
+                    journal_file, args.tag[0], indexing=not using_emergency_journal
+                )
             elif args.return_tag:
-                return_next_tag(journal_file, args.return_tag[0])
+                return_next_tag(
+                    journal_file,
+                    args.return_tag[0],
+                    indexing=not using_emergency_journal,
+                )
             elif args.save_and_tag:
                 save_line(
                     journal_file,
@@ -182,7 +188,11 @@ if __name__ == "__main__":
                     as_command=args.command,
                     printing=False,
                 )
-                tag_last_line(journal_file, args.save_and_tag[0])
+                tag_last_line(
+                    journal_file,
+                    args.save_and_tag[0],
+                    indexing=not using_emergency_journal,
+                )
             elif args.remove:
                 remove_last_line(journal_file)
     except ILockException:

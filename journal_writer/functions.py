@@ -133,9 +133,9 @@ def remove_last_line(journal_file: str) -> None:
             f.write(line)
 
 
-def tag_last_line(journal_file: str, tag_name: str) -> None:
+def tag_last_line(journal_file: str, tag_name: str, indexing: bool = True) -> None:
     """Add a tag based in `tag_name` to the last line of the journal. Calculate
-    the correct tag index.
+    the correct tag index, if not disabled with `indexing`.
     """
 
     # Read the journal and get all lines but last and last line separately
@@ -145,7 +145,7 @@ def tag_last_line(journal_file: str, tag_name: str) -> None:
         last_line = all_lines[-1]
         del all_lines  # Defer
 
-    new_tag = calculate_next_tag(journal_file, tag_name)
+    new_tag = calculate_next_tag(journal_file, tag_name, indexing=indexing)
 
     # Calculate the new last line to the journal and write it
     new_last_line = last_line.replace("\n", f" #{new_tag}.\n")
@@ -157,11 +157,12 @@ def tag_last_line(journal_file: str, tag_name: str) -> None:
     print(f"\n   {new_last_line}")  # Print the new last line
 
 
-def return_next_tag(journal_file: str, tag_name: str) -> None:
+def return_next_tag(journal_file: str, tag_name: str, indexing: bool = True) -> None:
     """Print a new full tag, based in the provided `tag_name` and with its
-    correct next index after revise the journal.
+    correct next index after revise the journal, if not disabled with
+    `indexing`.
     """
-    print(calculate_next_tag(journal_file, tag_name))
+    print(calculate_next_tag(journal_file, tag_name, indexing=indexing))
 
 
 ################### HELP FUNCTIONS ###################
@@ -185,29 +186,33 @@ def calculate_next_line_index(journal_file: str) -> str:
         )
 
 
-def calculate_next_tag(journal_file: str, tag_name: str) -> str:
+def calculate_next_tag(journal_file: str, tag_name: str, indexing: bool = True) -> str:
     """Calculate a new full tag, based in the provided `tag_name` and with its
-    correct next index after revise the journal.
+    correct next index after revise the journal. If
+    `indexing` as `False`, simply use a "?". This last useful if using emergency
+     journal.
     """
 
-    # Read the journal and merge getting lines
-    with open(journal_file, "r") as f:
-        all_lines = f.readlines()
+    if indexing:
+        # Read the journal and merge getting lines
+        with open(journal_file, "r") as f:
+            all_lines = f.readlines()
 
-    # Merge all lines as text to process it
-    all_text = ""
-    for line in reversed(all_lines):  # Reverse lines to find first last tag indexes
-        all_text += line
+        # Merge all lines as text to process it
+        all_text = ""
+        for line in reversed(all_lines):  # Reverse lines to find first last tag indexes
+            all_text += line
 
-    # First check if the tag has been already used
-    tag_used = all_text.find(f"{tag_name}1") != -1
-    if tag_used:
-        # Calculate last index of the tag in the journal
-        index = 1
-        while all_text.find(f"{tag_name}{index}") != -1:
-            index += 1
-        new_tag_indexed = f"{tag_name}{index}"  # Last index incremented one
+        # First check if the tag has been already used
+        tag_used = all_text.find(f"{tag_name}1") != -1
+        if tag_used:
+            # Calculate last index of the tag in the journal
+            index = 1
+            while all_text.find(f"{tag_name}{index}") != -1:
+                index += 1
+        else:  # Never used
+            index = 1
     else:
-        new_tag_indexed = f"{tag_name}1"
+        index = "?"
 
-    return new_tag_indexed
+    return f"{tag_name}{index}"
