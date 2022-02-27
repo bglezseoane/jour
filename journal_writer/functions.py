@@ -1,7 +1,7 @@
 ###########################################################
 #                      Journal Writer
 #
-#           A Borja G. Seoane's ad-hoc utility to
+#         A Borja Glez. Seoane's ad-hoc utility to
 #                   write his Cartapacio
 #
 # Copyright 2022 Borja González Seoane. All rights reserved
