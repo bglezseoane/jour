@@ -24,11 +24,6 @@ from ilock import ILock, ILockException
 
 from journal_writer.functions import *
 
-EMERGENCY_JOURNAL = os.path.join(
-    os.path.expanduser("~"),
-    "Desktop",
-    f"Emergency_journal.md",
-)
 
 if __name__ == "__main__":
     # Define the parser
@@ -109,6 +104,17 @@ if __name__ == "__main__":
         print(Fore.RED + "[PARSE ERROR]" + Style.RESET_ALL + " Revise command.")
         sys.exit(1)
 
+    # Get current machine name
+    current_machine_name = (
+        platform.node().split(".")[0].capitalize()
+    )  # Cut '.local' and first letter upper
+    # Compute emergency journal file name
+    emergency_journal_file = os.path.join(
+        os.path.expanduser("~"),
+        "Desktop",
+        f"Emergency_journal_{current_machine_name}.md",
+    )
+
     # Fix journal file name
     if not args.custom_journal:
         journal_file = get_journal_filename()
@@ -136,7 +142,7 @@ if __name__ == "__main__":
         )
         using_emergency_journal = True
         original_journal_file = journal_file
-        journal_file = use_emergency_journal(EMERGENCY_JOURNAL)
+        journal_file = use_emergency_journal(emergency_journal_file)
     # Check emergency journal file reachability
     if using_emergency_journal and not os.path.isfile(journal_file):
         # noinspection PyUnboundLocalVariable
@@ -155,7 +161,7 @@ if __name__ == "__main__":
             Fore.YELLOW
             + "[WARNING]"
             + Style.RESET_ALL
-            + f" Emergency journal file in '{EMERGENCY_JOURNAL}' pending to be "
+            + f" Emergency journal file in '{emergency_journal_file}' pending to be "
             f"merged with main journal."
         )
 
