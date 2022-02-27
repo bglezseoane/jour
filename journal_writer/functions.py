@@ -43,6 +43,23 @@ def get_journal_filename() -> str:
         )
 
 
+def use_emergency_journal(emergency_journal_file: str) -> str:
+    if os.path.isfile(emergency_journal_file):  # Already created, only go on using it
+        return emergency_journal_file
+    else:
+        create_journal_file(
+            emergency_journal_file, first_line="Create this emergency journal"
+        )
+        return emergency_journal_file
+
+
+def create_journal_file(
+    journal_file: str, first_line: str = "Create this journal"
+) -> None:
+    with open(journal_file, "w") as f:
+        f.write(f"1. {first_line}.\n")
+
+
 def print_journal(journal_file: str) -> None:
     """Read the journal and print its last lines."""
     lines = ""

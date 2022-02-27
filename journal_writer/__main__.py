@@ -24,6 +24,12 @@ from ilock import ILock, ILockException
 
 from journal_writer.functions import *
 
+EMERGENCY_JOURNAL = os.path.join(
+    os.path.expanduser("~"),
+    "Desktop",
+    f"Emergency_journal.md",
+)
+
 if __name__ == "__main__":
     # Define the parser
     parser = argparse.ArgumentParser(
@@ -108,14 +114,38 @@ if __name__ == "__main__":
         journal_file = get_journal_filename()
     else:
         journal_file = os.path.abspath(args.custom_journal[0])
+        if not os.path.isfile(journal_file):
+            # Emergency journal support doesn't apply using custom journal
+            print(
+                Fore.RED
+                + "[CONFIG ERROR]"
+                + Style.RESET_ALL
+                + f" Custom set journal file in '{journal_file}' unreachable. Aborted."
+            )
+            sys.exit(1)
 
     # Check journal file existence
+    using_emergency_journal = False
     if not os.path.isfile(journal_file):
+        print(
+            Fore.YELLOW
+            + "[WARNING]"
+            + Style.RESET_ALL
+            + f" Journal file in '{journal_file}' unreachable. Using emergency "
+            f"journal instead."
+        )
+        using_emergency_journal = True
+        original_journal_file = journal_file
+        journal_file = use_emergency_journal(EMERGENCY_JOURNAL)
+    # Check emergency journal file reachability
+    if using_emergency_journal and not os.path.isfile(journal_file):
+        # noinspection PyUnboundLocalVariable
         print(
             Fore.RED
             + "[CONFIG ERROR]"
             + Style.RESET_ALL
-            + f" Journal file in '{journal_file}' unreachable."
+            + f" Emergency journal file in '{journal_file}' unreachable. Original "
+            f"journal in ''{original_journal_file} also unreachable. Aborted."
         )
         sys.exit(1)
 
