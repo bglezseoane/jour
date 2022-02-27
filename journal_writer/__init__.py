@@ -9,7 +9,7 @@
 
 __name__ = "Journal Writer"
 __desc__="A Borja Glez. Seoane's ad-hoc utility to write his Cartapacio"
-__version__ = "0.0.1"
+__version__ = "1.0"
 
 __author__ = "Borja González Seoane"
 __maintainer__ = __author__
