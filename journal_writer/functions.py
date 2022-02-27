@@ -15,9 +15,31 @@ This module closures the function definitions used along these package.
 """
 
 import datetime
+import os
+import platform
 from collections import deque
 
 ################### MAIN FUNCTIONS ###################
+
+
+def get_journal_filename() -> str:
+    """Read the current machine journal file names. Try to use shell `JOURNAL`
+    environment variable and if it is not available, use the default location.
+    """
+    try:
+        return os.environ["JOURNAL"]
+    except KeyError:
+        # Get current machine name
+        current_machine_name = (
+            platform.node().split(".")[0].capitalize()
+        )  # Cut '.local' and first letter upper
+
+        return os.path.join(
+            os.path.expanduser("~"),
+            "Cartapacio",
+            "Machines",
+            f"Journal_of_{current_machine_name}.md",
+        )
 
 
 def print_journal(journal_file: str) -> None:
@@ -29,7 +51,9 @@ def print_journal(journal_file: str) -> None:
     print(lines)
 
 
-def save_line(journal_file: str, content: str, as_command: bool = False) -> None:
+def save_line(
+    journal_file: str, content: str, as_command: bool = False, printing: bool = True
+) -> None:
     """Save a new line to the journal."""
 
     # Calculate new line index
@@ -51,7 +75,8 @@ def save_line(journal_file: str, content: str, as_command: bool = False) -> None
     # Write and print the new line
     with open(journal_file, "a") as f:
         f.write(new_line)
-    print(f"\n   {new_line}")
+    if printing:
+        print(f"\n   {new_line}")
 
 
 def append_to_last_line(journal_file: str, new_content: str, as_command: bool = False):
