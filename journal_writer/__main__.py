@@ -28,8 +28,9 @@ from journal_writer.functions import *
 def main():
     # Define the parser
     parser = argparse.ArgumentParser(
-        prog="Journal Writer",
-        description="A Borja Glez. Seoane's ad-hoc utility to write his Cartapacio.",
+        prog="jw",
+        description="Journal Writer ('jw') is a Borja Glez. Seoane's ad-hoc "
+        "utility to write his Cartapacio.",
         epilog="Copyright 2022 Borja González Seoane. All rights reserved",
     )
     group = parser.add_mutually_exclusive_group(required=False)
