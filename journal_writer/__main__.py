@@ -157,7 +157,7 @@ def main():
         sys.exit(1)
 
     # Warning if emergency journal exist, if not already warning
-    if not using_emergency_journal:
+    if not using_emergency_journal and os.path.isfile(emergency_journal_file):
         print(
             Fore.YELLOW
             + "[WARNING]"
