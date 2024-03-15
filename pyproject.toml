@@ -1,17 +1,111 @@
+[build-system]
+build-backend = "poetry.core.masonry.api"
+requires = [
+    "poetry-core",
+]
+
+[tool.autoflake]
+in-place = true
+recursive = true
+remove-all-unused-imports = true
+
+[tool.black]
+target-version = [
+    "py311",
+]
+
+[tool.coverage.run]
+omit = []
+
+[tool.isort]
+profile = "black"
+
+[tool.poe.tasks.format]
+help = "Run all formating tools on the base"
+sequence = [
+    "format_autoflake",
+    "format_black",
+    "format_blacken_docs",
+    "format_isort",
+    "format_prettier",
+    "format_pyprojectsort",
+]
+
+[tool.poe.tasks.format_autoflake]
+help = "Run AutoFlake on the base"
+sequence = [
+    { cmd = "autoflake ." },
+]
+
+[tool.poe.tasks.format_black]
+help = "Run Black on the base"
+sequence = [
+    { cmd = "black ." },
+]
+
+[tool.poe.tasks.format_blacken_docs]
+help = "Run Blacken-Docs on the base"
+ignore_fail = "return_zero"
+sequence = [
+    { shell = "git ls-files -z -- '*.md' | xargs -0 blacken-docs" },
+    { shell = "git ls-files -z -- '*.py' | xargs -0 blacken-docs" },
+]
+
+[tool.poe.tasks.format_isort]
+help = "Run iSort on the base"
+sequence = [
+    { cmd = "isort ." },
+]
+
+[tool.poe.tasks.format_prettier]
+help = "Run Prettier on the read-me file. Requires to be installed globally"
+ignore_fail = "return_zero"
+sequence = [
+    { cmd = "prettier --write README.md" },
+]
+
+[tool.poe.tasks.format_pyprojectsort]
+help = "Run `pyprojectsort` on the `pyproject.toml` file"
+ignore_fail = "return_zero"
+sequence = [
+    { cmd = "pyprojectsort pyproject.toml" },
+]
+
+[tool.poe.tasks.test]
+cmd = "pytest --cov=journal_writer --cov-report=term --cov-report=xml:cov.xml"
+help = "Run tests with coverage report"
+
+[tool.poe.tasks.test_quick]
+cmd = "pytest -m \"not slow\""
+help = "Run tests, excluding slow ones and without coverage"
+
 [tool.poetry]
-name = "journal-writer"
-version = "1.1.0"
+authors = [
+    "Borja González Seoane <borja@glezseoane.es>",
+]
 description = "An utility for a high-level machine maintenance journal"
-authors = ["Borja González Seoane <borja@glezseoane.es>"]
 license = "All rights reserved"
+name = "journal-writer"
 readme = "README.md"
+version = "1.1.0"
 
 [tool.poetry.dependencies]
-python = "^3.11"
-ilock = "^1.0.3"
 colorama = "^0.4.6"
+ilock = "^1.0.3"
+python = "^3.11"
 
+[tool.poetry.group.dev.dependencies]
+autoflake = "^2.2.1"
+black = "^23.10.1"
+blacken-docs = "^1.16.0"
+isort = "^5.12.0"
+poethepoet = "^0.24.1"
+pyprojectsort = "^0.3.0"
+pytest = "^7.4.3"
+pytest-cov = "^4.1.0"
 
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[tool.pytest.ini_options]
+markers = [
+    "serial",
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+]

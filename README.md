@@ -1,5 +1,4 @@
-Journal Writer
-==============
+# Journal Writer
 
 This repository contains the Journal Writer, a Borja Glez. Seoane's ad-hoc utility to write his Cartapacio.
 
@@ -44,7 +43,6 @@ Uploaded to private GitHub repository \[[1]\] and available since private Homebr
 ```sh
 brew install journal_writer
 ```
-
 
 <!-- References -->
 
