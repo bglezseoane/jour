@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "journal-writer"
+version = "1.1.0"
+description = "An utility for a high-level machine maintenance journal"
+authors = ["Borja González Seoane <borja@glezseoane.es>"]
+license = "All rights reserved"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+ilock = "^1.0.3"
+colorama = "^0.4.6"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
