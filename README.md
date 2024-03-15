@@ -1,48 +1,34 @@
 # Journal Writer
 
-This repository contains the Journal Writer, a Borja Glez. Seoane's ad-hoc utility to write his Cartapacio.
+This repository contains the Journal Writer tool, an utility for a high-level machine maintenance journal. The final purpose of this tool is to write and handle a journal in which the user or some automated process can write and tag the performed actions related with the machine configuration, maintenance, and other relevant information. This way, the user can keep track of the changes and the performed actions, and also can obtain a high-level overview of the machine status over time.
 
-Usage:
+Some examples of the usage of this tool could be:
 
-```
-usage: jw [-h] [--print | --save MESSAGE [MESSAGE ...] | --append MESSAGE
-          [MESSAGE ...] | --tag TAG | --return_tag RETURN_TAG | --save_and_tag
-          TAG [MESSAGE ...] | --remove] [--command]
-          [--custom_journal CUSTOM_JOURNAL]
+- Write a journal entry with a tag, for example, to keep track of the performed updates in the machine.
+- Write a journal entry with a tag with a system backup.
+- Write a journal entry with a tag with a relevant system configuration change: like the installation of a new package, the change of a configuration file, etc.
 
-Journal Writer ('jw') is a Borja Glez. Seoane's ad-hoc utility to write his
-Cartapacio.
+After some time, the user can obtain a high-level traceability of the machine changes and fixes, helping even to debug some issues or roll back to a previous state.
 
-optional arguments:
-  -h, --help            show this help message and exit
-  --print, -p, --echo, -e
-                        Print the last lines of the journal. Default option
-  --save MESSAGE [MESSAGE ...], -s MESSAGE [MESSAGE ...]
-                        Save the input line into the journal
-  --append MESSAGE [MESSAGE ...], -a MESSAGE [MESSAGE ...]
-                        Append the input to the last line of the journal
-  --tag TAG, -t TAG     Append the input tag to the last line of the journal.
-                        The next index of the tag is computed
-  --return_tag RETURN_TAG, -rt RETURN_TAG
-                        Return a full tag after compute its next index, but
-                        don't write it into the journal. This option is useful
-                        to obtain the tag to update other relative logs
-  --save_and_tag TAG [MESSAGE ...], -st TAG [MESSAGE ...]
-                        Save a new line inputted and append to it the tag
-                        inputted as first parameter
-  --remove, -r          Remove the last line of the journal
-  --command, -c         Format the input line as a command
-  --custom_journal CUSTOM_JOURNAL, -cj CUSTOM_JOURNAL
-                        Define a custom journal where write
+## Installation
 
-Copyright 2022 Borja González Seoane. All rights reserved
-```
-
-Uploaded to private GitHub repository \[[1]\] and available since private Homebrew tap \[[2]\], using:
+Uploaded to private GitHub repository \[[1]\] and available since private Homebrew tap \[[2]\] —once enabled—, using:
 
 ```sh
 brew install journal_writer
 ```
+
+## Usage
+
+```sh
+jw --help # Show the help message with the available commands and options
+```
+
+Basically, each new journal entry is a new line in the journal file, with an index and a date. The index is useful to cross-reference the journal entries. The entries are appended to the journal file sequentially. The journal file location is defined in the environment variable `JOURNAL` and if the tool cannot reach the file, the incoming entries are stored in an emergency journal file, which location is `JOURNAL_EMERGENCY` if defined or `~/.journal_emergency` otherwise. This is useful if, for example, the journal file is located in a remote file system or cloud provider and the connection is lost. The user can then arrange the journal entries merging the emergency journal manually.
+
+In addition to the entries, the tool also handle tags, like `#backup1`, to an easier navigation of the journal file. This is specially useful to link the journal entries with tags in a configuration Git repository, for example, because a journal tag can be also set in the repo.
+
+Journal format is Markdown, so the user can also format all the history to a more readable format, like a PDF, using a Markdown to PDF converter.
 
 <!-- References -->
 
