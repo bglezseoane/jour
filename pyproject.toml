@@ -27,7 +27,7 @@ sequence = [
     "format_black",
     "format_blacken_docs",
     "format_isort",
-    "format_prettier",
+    "format_mdformat",
     "format_pyprojectsort",
 ]
 
@@ -57,11 +57,11 @@ sequence = [
     { cmd = "isort ." },
 ]
 
-[tool.poe.tasks.format_prettier]
-help = "Run Prettier on the read-me file. Requires to be installed globally"
+[tool.poe.tasks.format_mdformat]
+help = "Run Mdformat on the read-me file"
 ignore_fail = "return_zero"
 sequence = [
-    { cmd = "prettier --write README.md" },
+    { cmd = "mdformat --number --wrap=keep README.md" },
 ]
 
 [tool.poe.tasks.format_pyprojectsort]
@@ -90,8 +90,8 @@ readme = "README.md"
 version = "1.1.0"
 
 [tool.poetry.dependencies]
-colorama = "^0.4.6"
 ilock = "^1.0.3"
+mdformat = "^0.7.17"
 python = "^3.11"
 
 [tool.poetry.group.dev.dependencies]
