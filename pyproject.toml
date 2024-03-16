@@ -15,7 +15,9 @@ target-version = [
 ]
 
 [tool.coverage.run]
-omit = []
+omit = [
+    "*/__main__.py",
+]
 
 [tool.isort]
 profile = "black"
