@@ -4,33 +4,65 @@ This repository contains the Journal Writer tool, an utility for a high-level ma
 
 Some examples of the usage of this tool could be:
 
-- Write a journal entry with a tag, for example, to keep track of the performed updates in the machine.
-- Write a journal entry with a tag with a system backup.
-- Write a journal entry with a tag with a relevant system configuration change: like the installation of a new package, the change of a configuration file, etc.
+1. Write a journal to keep track of an operating system update you just ran:
 
-After some time, the user can obtain a high-level traceability of the machine changes and fixes, helping even to debug some issues or roll back to a previous state.
+```sh
+jw -w 'OS update to 24.5.2'
+```
+
+Output:
+
+```
+0014. 2024-03-16 17:04:50,123 - test_username - OS update to 24.5.2.
+```
+
+2. Write a journal entry about a backup of the machine. Use a tag.
+
+```sh
+jw -w 'General system backup' && w -t BUP
+```
+
+Output:
+
+```
+0015. 2024-03-16 17:06:08,630 - test_username - General system backup. #BUP1
+```
+
+You could then use this same tag `BUP1` to also tag a commit in a Git repository with your machine config. This way your journal and your machine config are paired.
+
+### The journal file
+
+Basically, each new journal entry is a new line in the journal file, with an index and a date. The index is useful to cross-reference the journal entries. The entries are appended to the journal file sequentially. The journal file location is defined in the environment variable `$JOURNAL` (or, by default in `~/.journal.md`). If the tool cannot reach the file, the incoming entries are stored in an emergency journal file, which location is `$JOURNAL_EMERGENCY`, if defined, or `~/.journal_emergency.md`, otherwise. This is useful if, for example, the journal file is located in a remote file system or cloud provider and the connection is lost. The user can then manually arrange the journal entries merging the emergency journal.
+
+In addition to the entries, the tool also handle tags, like `#backup1`, to an easier navigation of the journal file. This is specially useful to link the journal entries with tags in a configuration Git repository, for example, because a journal tag can be also set in the repo.
+
+Journal format is Markdown, so the user can also export all the history to a more readable format, like a PDF, using a Markdown to PDF converter.
+
+After some time, the user can obtain with Journal Writer a high-level traceability of the machine changes and fixes, helping even to debug some issues or roll back to a previous state.
 
 ## Installation
 
-Uploaded to private GitHub repository \[[1]\] and available since private Homebrew tap \[[2]\] —once enabled—, using:
+### Homebrew
+
+First add Journal Writer author's public [tap](https://github.com/bglezseoane/homebrew-tap):
+
+```sh
+brew tap bglezseoane/tap
+```
+
+Then install Journal Writer with:
 
 ```sh
 brew install journal_writer
 ```
 
-## Usage
+### PyPI
 
-```sh
-jw --help # Show the help message with the available commands and options
+This tool is [publicly available in PyPI](https://pypi.org/project/journal-writer/), so you could use any method that consumes this registry to install it (like `pip`). As a recommendation, you could use PipX:
+
 ```
+pipx install journal-writer
 
-Basically, each new journal entry is a new line in the journal file, with an index and a date. The index is useful to cross-reference the journal entries. The entries are appended to the journal file sequentially. The journal file location is defined in the environment variable `JOURNAL` and if the tool cannot reach the file, the incoming entries are stored in an emergency journal file, which location is `JOURNAL_EMERGENCY` if defined or `~/.journal_emergency` otherwise. This is useful if, for example, the journal file is located in a remote file system or cloud provider and the connection is lost. The user can then arrange the journal entries merging the emergency journal manually.
-
-In addition to the entries, the tool also handle tags, like `#backup1`, to an easier navigation of the journal file. This is specially useful to link the journal entries with tags in a configuration Git repository, for example, because a journal tag can be also set in the repo.
-
-Journal format is Markdown, so the user can also format all the history to a more readable format, like a PDF, using a Markdown to PDF converter.
-
-<!-- References -->
-
-[1]: https://github.com/bglezseoane/journal-writer
-[2]: https://github.com/bglezseoane/homebrew-private-tap
+# Or...
+pip install journal-writer
+```
