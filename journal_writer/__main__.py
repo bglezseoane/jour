@@ -138,13 +138,13 @@ def main():
         if args.write:
             jw.write_line(
                 args.MESSAGE_OR_TAG,
-                as_command=args.command,
+                as_command=args.as_command,
                 signature=args.signature,
                 printing=True,
             )
         elif args.append:
             jw.append_to_last_line(
-                args.MESSAGE_OR_TAG, as_command=args.command, printing=True
+                args.MESSAGE_OR_TAG, as_command=args.as_command, printing=True
             )
         elif args.tag:
             jw.tag_last_line(args.MESSAGE_OR_TAG, printing=True)
