@@ -19,7 +19,9 @@ except ImportError:
 handler = logging.StreamHandler()
 logger = logging.getLogger(__name__)
 logger.setLevel("INFO")
-formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+formatter = logging.Formatter(
+    "%(asctime)s - journal_writer - %(levelname)s - %(message)s"
+)
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 

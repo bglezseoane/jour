@@ -140,17 +140,15 @@ class TestJournalWriter(unittest.TestCase):
             with patch("journal_writer.journal_writer.logger.info") as mock_logger:
                 jw.print_journal()
 
-                # Assert that the `logger.info`` method is called with the expected lines,
+                # Assert that the `logger.info` method is called with the expected lines,
                 # which are the last 10 lines of the journal
-                self.assertEqual(mock_logger.call_count, 10)
+                self.assertEqual(mock_logger.call_count, 1)
 
-                # Check that the last 10 lines are printed. The calls should start by `00ii`, where
-                # `ii` is the line number; and ends with `Message ii.\n`
+                # Check that the last 10 lines are printed. The lines should start by `  00ii`, where
+                # `ii` is the line number; and end with `Message ii.\n`
                 for i in range(15, 25):
-                    call_msg = mock_logger.call_args_list[i - 15].args[0]
-                    self.assertTrue(call_msg.startswith(f"00{i+1}"))
-                    self.assertIn("test_user", call_msg)  # Mocked as user name
-                    self.assertTrue(call_msg.endswith(f"Message {i+1}.\n"))
+                    self.assertIn(f"  00{i+1}", mock_logger.call_args[0][0])
+                    self.assertIn(f"Message {i+1}.\n", mock_logger.call_args[0][0])
 
     def test_custom_signature(self):
         """

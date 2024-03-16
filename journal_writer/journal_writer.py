@@ -11,7 +11,9 @@ from ilock import ILock
 handler = logging.StreamHandler()
 logger = logging.getLogger(__name__)
 logger.setLevel("INFO")
-formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+formatter = logging.Formatter(
+    "%(asctime)s - journal_writer - %(levelname)s - %(message)s"
+)
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
@@ -68,7 +70,9 @@ class JournalWriter:
         """
         Enter the context manager to get a lock over the journal file.
         """
-        logger.info(f"Using journal file: `{self._active_journal_file}`...")
+        logger.debug(
+            f"Using journal file: `{self._active_journal_file}`..."
+        )  # Debug level
 
         self._journal_lock = ILock(
             f"jw_lock_{self._active_journal_file.name}", reentrant=True, timeout=10
@@ -146,6 +150,8 @@ class JournalWriter:
                 self.__format_new_line(first_line, index=1, signature="journal_writer")
             )
 
+        logger.info(f"Journal file created in `{journal_file}`.")
+
     def print_journal(self) -> None:
         """
         Read the journal and print its last lines.
@@ -155,8 +161,10 @@ class JournalWriter:
         # Print last 10 lines or all the journal if it has less than 10 lines
         n_lines = 10 if len(self._journal) > 10 else len(self._journal)
         if n_lines > 0:
+            message = f"Journal last {n_lines} lines:\n"
             for line in self._journal[-n_lines:]:
-                logger.info(line)
+                message += f"  {line}"
+            logger.info(message)
         else:
             logger.warning(f"The journal is empty.")
 
@@ -186,7 +194,7 @@ class JournalWriter:
         self._journal.append(new_line)
 
         if printing:
-            logger.info(f"\n   {new_line}")
+            logger.info(f"New line:\n  {new_line}")
 
     def append_to_last_line(
         self, new_message: str, as_command: bool = False, printing: bool = True
@@ -213,7 +221,7 @@ class JournalWriter:
         self._journal[-1] = new_last_line
 
         if printing:
-            logger.info(f"\n   {new_last_line}")
+            logger.info(f"New line:\n  {new_last_line}")
 
     def remove_last_line(self) -> None:
         """
@@ -222,6 +230,7 @@ class JournalWriter:
         self.__check_context()
 
         self._journal.pop()
+        logger.info("Last line removed.")
 
     def tag_last_line(
         self, tag_name: str, indexing: bool = True, printing: bool = True
@@ -248,7 +257,7 @@ class JournalWriter:
         self._journal[-1] = new_last_line
 
         if printing:
-            logger.info(f"\n   {new_last_line}")
+            logger.info(f"New line:\n  {new_last_line}")
 
     def get_next_tag(
         self, tag_name: str, indexing: bool = True, printing: bool = True
@@ -275,7 +284,9 @@ class JournalWriter:
         new_tag = f"#{tag_name}{new_tag_index}"
 
         if printing:
-            logger.info(f"\n   {new_tag}")
+            print(
+                new_tag
+            )  # Clean output because typically this method is used to capture the tag by a script or command
 
         return new_tag
 
