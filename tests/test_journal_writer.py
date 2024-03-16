@@ -226,3 +226,15 @@ class TestJournalWriter(unittest.TestCase):
         with JournalWriter(create_journal=True) as jw:
             jw.write_line("brew install example", as_command=True)
             self.assertIn(" - `brew install example`.\n", jw._journal[-1])
+
+    def test_warn_about_using_emergency_journal(self):
+        """
+        Test that a warning is logged when the emergency journal is used.
+        """
+        with patch("journal_writer.journal_writer.logger.warning") as mock_logger:
+            with JournalWriter(create_journal=False) as jw:
+                jw.write_line("Test message")
+                self.assertEqual(
+                    f"Using emergency journal file in `{self.journal_emergency_file}`. Manually merge this journal with the default journal file when possible.",
+                    mock_logger.call_args[0][0],
+                )

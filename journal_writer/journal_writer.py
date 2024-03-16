@@ -66,6 +66,13 @@ class JournalWriter:
                 )
                 self._active_journal_file = Path(self.journal_emergency_file)
 
+        # Warn the user if using the emergency journal, because probably it should be merged
+        # with the default journal file when possible
+        if self._active_journal_file == self.journal_emergency_file:
+            logger.warning(
+                f"Using emergency journal file in `{self.journal_emergency_file}`. Manually merge this journal with the default journal file when possible."
+            )
+
     def __enter__(self):
         """
         Enter the context manager to get a lock over the journal file.
@@ -129,11 +136,11 @@ class JournalWriter:
         """
         journal_file = os.getenv("JOURNAL")
         if journal_file:
-            self.journal_file = journal_file
+            self.journal_file = Path(journal_file)
 
         journal_emergency_file = os.getenv("JOURNAL_EMERGENCY")
         if journal_emergency_file:
-            self.journal_emergency_file = journal_emergency_file
+            self.journal_emergency_file = Path(journal_emergency_file)
 
     def __create_journal_file(
         self, journal_file: Path, first_line: str = "Create this journal"
