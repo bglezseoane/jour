@@ -29,7 +29,7 @@ def parse_args():
     parser = argparse.ArgumentParser(
         prog="jw",
         description="An utility for a high-level machine maintenance journal. Uses the file defined in `JOURNAL` environment variable as the journal file location",
-        epilog="Borja González Seoane",
+        epilog="© Borja González Seoane",
     )
 
     group = parser.add_mutually_exclusive_group(required=False)
