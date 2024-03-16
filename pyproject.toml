@@ -74,7 +74,7 @@ sequence = [
 ]
 
 [tool.poe.tasks.test]
-cmd = "pytest --cov=journal_writer --cov-report=term --cov-report=xml:cov.xml"
+cmd = "pytest --cov=jour --cov-report=term --cov-report=xml:cov.xml"
 help = "Run tests with coverage report"
 
 [tool.poe.tasks.test_quick]
@@ -104,9 +104,9 @@ keywords = [
     "markdown",
 ]
 license = "LICENSE"
-name = "journal-writer"
+name = "jour"
 readme = "README.md"
-repository = "https://github.com/bglezseoane/journal-writer"
+repository = "https://github.com/bglezseoane/jour"
 version = "2.0.0"
 
 [tool.poetry.dependencies]
@@ -125,7 +125,7 @@ pytest = "^7.4.3"
 pytest-cov = "^4.1.0"
 
 [tool.poetry.scripts]
-jw = "journal_writer.__main__:main"
+jw = "jour.__main__:main"
 
 [tool.pytest.ini_options]
 markers = [

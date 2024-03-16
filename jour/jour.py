@@ -11,16 +11,14 @@ from ilock import ILock
 handler = logging.StreamHandler()
 logger = logging.getLogger(__name__)
 logger.setLevel("INFO")
-formatter = logging.Formatter(
-    "%(asctime)s - journal_writer - %(levelname)s - %(message)s"
-)
+formatter = logging.Formatter("%(asctime)s - jour - %(levelname)s - %(message)s")
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
 
-class JournalWriter:
+class Jour:
     """
-    Journal Writer central class. This class is intended to be used as a context manager
+    Jour central class. This class is intended to be used as a context manager
     to implement a lock to manipulate the journal file securely. It also provides a set
     of methods to write, append, tag, and print the journal.
     """
@@ -30,7 +28,7 @@ class JournalWriter:
 
     def __init__(self, create_journal: bool = False):
         """
-        Initialize the Journal Writer. This class should be used as a context manager
+        Initialize the Jour. This class should be used as a context manager
         to ensure a singleton behavior over the journal file, obtaining a lock over it.
 
         :param create_journal: If `True`, create a new journal file.
@@ -124,10 +122,8 @@ class JournalWriter:
         Check if the context manager is active. If not, raise an error.
         """
         if not self._journal_lock:
-            logger.error(
-                "Journal Writer context not found. Use this class as a context manager."
-            )
-            raise RuntimeError("`Journal Writer` context not found.")
+            logger.error("Jour context not found. Use this class as a context manager.")
+            raise RuntimeError("`Jour` context not found.")
 
     def __set_journals_file_locations(self) -> None:
         """
@@ -153,9 +149,7 @@ class JournalWriter:
         """
         # Create empty journal file
         with open(journal_file, "w") as f:
-            f.write(
-                self.__format_new_line(first_line, index=1, signature="journal_writer")
-            )
+            f.write(self.__format_new_line(first_line, index=1, signature="jour"))
 
         logger.info(f"Journal file created in `{journal_file}`.")
 

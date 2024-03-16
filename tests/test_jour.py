@@ -6,10 +6,10 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from journal_writer.journal_writer import JournalWriter
+from jour.jour import Jour
 
 
-class TestJournalWriter(unittest.TestCase):
+class TestJour(unittest.TestCase):
     def setUp(self):
         # Use the name of the repository root as the preffix for the temporary directory
         self.temp_dir = Path(
@@ -37,19 +37,19 @@ class TestJournalWriter(unittest.TestCase):
 
     def test_error_if_no_context_manager(self):
         """
-        Test that an error is raised if the `JournalWriter` is not used as a context manager.
+        Test that an error is raised if the `Jour` is not used as a context manager.
         """
         with self.assertRaises(RuntimeError) as cm:
-            jw = JournalWriter()
+            jw = Jour()
             jw.print_journal()
 
-        self.assertEqual(str(cm.exception), "`Journal Writer` context not found.")
+        self.assertEqual(str(cm.exception), "`Jour` context not found.")
 
     def test_journal_creation(self):
         """
         Test that the journal file is created when the `create_journal` flag is set to `True`.
         """
-        with JournalWriter(create_journal=True):
+        with Jour(create_journal=True):
             self.assertTrue(os.path.isfile(self.journal_file))
 
     def test_journal_emergency_creation(self):
@@ -58,7 +58,7 @@ class TestJournalWriter(unittest.TestCase):
         and the `create_journal` flag is set to `False`. Test also that the emergency journal is
         used as target journal in this case.
         """
-        jw = JournalWriter(create_journal=False)
+        jw = Jour(create_journal=False)
         with jw:
             self.assertFalse(os.path.isfile(self.journal_file))
             self.assertTrue(os.path.isfile(self.journal_emergency_file))
@@ -73,7 +73,7 @@ class TestJournalWriter(unittest.TestCase):
         is created, so actually two lines should be present in the journal file. Implicitly, this
         test also checks that the Markdown format custom fixes are applied to the journal file.
         """
-        with JournalWriter(create_journal=True) as jw:
+        with Jour(create_journal=True) as jw:
             jw.write_line("Test message")
             self.assertEqual(len(jw._journal), 2)
 
@@ -91,7 +91,7 @@ class TestJournalWriter(unittest.TestCase):
         """
         Assert content is correctly appended to the last line of the journal.
         """
-        with JournalWriter(create_journal=True) as jw:
+        with Jour(create_journal=True) as jw:
             jw.write_line("Test message")
             jw.append_to_last_line("Additional message")
             self.assertIn("Test message. Additional message.", jw._journal[-1])
@@ -100,7 +100,7 @@ class TestJournalWriter(unittest.TestCase):
         """
         Assert that remove the last line of the journal works as expected.
         """
-        with JournalWriter(create_journal=True) as jw:
+        with Jour(create_journal=True) as jw:
             jw.write_line("Test message")
             jw.remove_last_line()
             self.assertEqual(len(jw._journal), 1)  # One line is the creation message
@@ -109,7 +109,7 @@ class TestJournalWriter(unittest.TestCase):
         """
         Assert that the `get_next_tag` method returns the next tag to be used in the journal.
         """
-        with JournalWriter(create_journal=True) as jw:
+        with Jour(create_journal=True) as jw:
             next_tag = jw.get_next_tag("Tag")
             self.assertEqual(next_tag, "#Tag1")
 
@@ -118,7 +118,7 @@ class TestJournalWriter(unittest.TestCase):
         Assert the tagging of the last line of the journal works as expected. Tag index should be
         increased.
         """
-        with JournalWriter(create_journal=True) as jw:
+        with Jour(create_journal=True) as jw:
             jw.write_line("Test message")
             jw.write_line("Other message")
             jw.tag_last_line("ExampleTag")
@@ -133,11 +133,11 @@ class TestJournalWriter(unittest.TestCase):
         Test that the `print_journal` method prints the last lines of the journal as
         expected. Test also signature is added in lines.
         """
-        with JournalWriter(create_journal=True) as jw:
+        with Jour(create_journal=True) as jw:
             for i in range(1, 25):
                 jw.write_line(f"Message {i+1}")
 
-            with patch("journal_writer.journal_writer.logger.info") as mock_logger:
+            with patch("jour.jour.logger.info") as mock_logger:
                 jw.print_journal()
 
                 # Assert that the `logger.info` method is called with the expected lines,
@@ -155,20 +155,20 @@ class TestJournalWriter(unittest.TestCase):
         Test that the signature is correctly added to the lines of the journal when a custom
         signature is provided.
         """
-        with JournalWriter(create_journal=True) as jw:
+        with Jour(create_journal=True) as jw:
             jw.write_line("Message", signature="CustomSignature")
             self.assertIn("CustomSignature", jw._journal[-1])
 
     def test_using_an_existent_journal_file(self):
         """
-        Test that the `JournalWriter` can be used normally with an existent journal file.
+        Test that the `Jour` can be used normally with an existent journal file.
         """
         # Manually create file and write some content
         with open(self.journal_file, "w") as f:
             f.write("# Testing Journal\n")  # Header
             f.write("This is a testing journal only for testing purposes.\n")
 
-        with JournalWriter() as jw:
+        with Jour() as jw:
             self.assertEqual(jw._active_journal_file, self.journal_file)
 
             # Add a line to the journal
@@ -178,17 +178,17 @@ class TestJournalWriter(unittest.TestCase):
 
     def test_using_empty_file_as_journal(self):
         """
-        Test that the `JournalWriter` can be used normally with an empty but existent journal
+        Test that the `Jour` can be used normally with an empty but existent journal
         file.
         """
         with open(self.journal_file, "w"):
             pass
 
-        with JournalWriter() as jw:
+        with Jour() as jw:
             self.assertEqual(jw._active_journal_file, self.journal_file)
 
             # Catch message when the journal is empty
-            with patch("journal_writer.journal_writer.logger.warning") as mock_logger:
+            with patch("jour.jour.logger.warning") as mock_logger:
                 jw.print_journal()
                 self.assertEqual(mock_logger.call_args[0][0], "The journal is empty.")
 
@@ -201,7 +201,7 @@ class TestJournalWriter(unittest.TestCase):
         """
         Test that the messages are correctly formatted when written to the journal.
         """
-        with JournalWriter(create_journal=True) as jw:
+        with Jour(create_journal=True) as jw:
             jw.write_line("This is a test message", signature="Testing Custom Author")
 
             # The line should be in format:
@@ -223,7 +223,7 @@ class TestJournalWriter(unittest.TestCase):
         """
         Test that the `as_command` flag formats the message as a command.
         """
-        with JournalWriter(create_journal=True) as jw:
+        with Jour(create_journal=True) as jw:
             jw.write_line("brew install example", as_command=True)
             self.assertIn(" - `brew install example`.\n", jw._journal[-1])
 
@@ -231,8 +231,8 @@ class TestJournalWriter(unittest.TestCase):
         """
         Test that a warning is logged when the emergency journal is used.
         """
-        with patch("journal_writer.journal_writer.logger.warning") as mock_logger:
-            with JournalWriter(create_journal=False) as jw:
+        with patch("jour.jour.logger.warning") as mock_logger:
+            with Jour(create_journal=False) as jw:
                 jw.write_line("Test message")
                 self.assertEqual(
                     f"Using emergency journal file in `{self.journal_emergency_file}`. Manually merge this journal with the default journal file when possible.",

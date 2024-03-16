@@ -3,7 +3,7 @@ Main
 ====
 
 This module is the main entry point for the `jw` command line utility. It uses the
-`argparse` module to parse the command line arguments and the `JournalWriter` class
+`argparse` module to parse the command line arguments and the `Jour` class
 to access the functionality.
 """
 
@@ -11,17 +11,15 @@ import argparse
 import logging
 
 try:
-    from journal_writer import JournalWriter
+    from jour import Jour
 except ImportError:
-    from .journal_writer import JournalWriter
+    from .jour import Jour
 
 # Setup logger
 handler = logging.StreamHandler()
 logger = logging.getLogger(__name__)
 logger.setLevel("INFO")
-formatter = logging.Formatter(
-    "%(asctime)s - journal_writer - %(levelname)s - %(message)s"
-)
+formatter = logging.Formatter("%(asctime)s - jour - %(levelname)s - %(message)s")
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
@@ -132,8 +130,8 @@ def main():
         logger.error("No tag to add.")
         return
 
-    # Create a `JournalWriter` object
-    jw = JournalWriter(create_journal=args.create_journal)
+    # Create a `Jour` object
+    jw = Jour(create_journal=args.create_journal)
 
     # Enter context an run the command
     with jw:

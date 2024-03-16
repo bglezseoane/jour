@@ -1,6 +1,6 @@
-# Journal Writer
+# Jour
 
-This repository contains the Journal Writer tool, an utility for a high-level machine maintenance journal. The final purpose of this tool is to write and handle a journal in which the user or some automated process can write and tag the performed actions related with the machine configuration, maintenance, and other relevant information. This way, the user can keep track of the changes and the performed actions, and also can obtain a high-level overview of the machine status over time.
+This repository contains the Jour tool, an utility for a high-level machine maintenance journal. The final purpose of this tool is to write and handle a journal in which the user or some automated process can write and tag the performed actions related with the machine configuration, maintenance, and other relevant information. This way, the user can keep track of the changes and the performed actions, and also can obtain a high-level overview of the machine status over time.
 
 Some examples of the usage of this tool could be:
 
@@ -38,31 +38,31 @@ In addition to the entries, the tool also handle tags, like `#backup1`, to an ea
 
 Journal format is Markdown, so the user can also export all the history to a more readable format, like a PDF, using a Markdown to PDF converter.
 
-After some time, the user can obtain with Journal Writer a high-level traceability of the machine changes and fixes, helping even to debug some issues or roll back to a previous state.
+After some time, the user can obtain with Jour a high-level traceability of the machine changes and fixes, helping even to debug some issues or roll back to a previous state.
 
 ## Installation
 
 ### Homebrew
 
-First add Journal Writer author's public [tap](https://github.com/bglezseoane/homebrew-tap):
+First add Jour author's public [tap](https://github.com/bglezseoane/homebrew-tap):
 
 ```sh
 brew tap bglezseoane/tap
 ```
 
-Then install Journal Writer with:
+Then install Jour with:
 
 ```sh
-brew install journal_writer
+brew install jour
 ```
 
 ### PyPI
 
-This tool is [publicly available in PyPI](https://pypi.org/project/journal-writer/), so you could use any method that consumes this registry to install it (like `pip`). As a recommendation, you could use PipX:
+This tool is [publicly available in PyPI](https://pypi.org/project/jour), so you could use any method that consumes this registry to install it (like `pip`). As a recommendation, you could use PipX:
 
 ```
-pipx install journal-writer
+pipx install jour
 
 # Or...
-pip install journal-writer
+pip install jour
 ```
