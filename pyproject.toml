@@ -107,7 +107,7 @@ license = "LICENSE"
 name = "journal-writer"
 readme = "README.md"
 repository = "https://github.com/bglezseoane/journal-writer"
-version = "1.1.0"
+version = "2.0.0"
 
 [tool.poetry.dependencies]
 ilock = "^1.0.3"
