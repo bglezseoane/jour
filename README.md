@@ -1,52 +1,68 @@
-Journal Writer
-==============
+# Jour
 
-This repository contains the Journal Writer, a Borja Glez. Seoane's ad-hoc utility to write his Cartapacio.
+This repository contains the Jour tool, an utility for a high-level machine maintenance journal. The final purpose of this tool is to write and handle a journal in which the user or some automated process can write and tag the performed actions related with the machine configuration, maintenance, and other relevant information. This way, the user can keep track of the changes and the performed actions, and also can obtain a high-level overview of the machine status over time.
 
-Usage:
+Some examples of the usage of this tool could be:
 
-```
-usage: jw [-h] [--print | --save MESSAGE [MESSAGE ...] | --append MESSAGE
-          [MESSAGE ...] | --tag TAG | --return_tag RETURN_TAG | --save_and_tag
-          TAG [MESSAGE ...] | --remove] [--command]
-          [--custom_journal CUSTOM_JOURNAL]
-
-Journal Writer ('jw') is a Borja Glez. Seoane's ad-hoc utility to write his
-Cartapacio.
-
-optional arguments:
-  -h, --help            show this help message and exit
-  --print, -p, --echo, -e
-                        Print the last lines of the journal. Default option
-  --save MESSAGE [MESSAGE ...], -s MESSAGE [MESSAGE ...]
-                        Save the input line into the journal
-  --append MESSAGE [MESSAGE ...], -a MESSAGE [MESSAGE ...]
-                        Append the input to the last line of the journal
-  --tag TAG, -t TAG     Append the input tag to the last line of the journal.
-                        The next index of the tag is computed
-  --return_tag RETURN_TAG, -rt RETURN_TAG
-                        Return a full tag after compute its next index, but
-                        don't write it into the journal. This option is useful
-                        to obtain the tag to update other relative logs
-  --save_and_tag TAG [MESSAGE ...], -st TAG [MESSAGE ...]
-                        Save a new line inputted and append to it the tag
-                        inputted as first parameter
-  --remove, -r          Remove the last line of the journal
-  --command, -c         Format the input line as a command
-  --custom_journal CUSTOM_JOURNAL, -cj CUSTOM_JOURNAL
-                        Define a custom journal where write
-
-Copyright 2022 Borja González Seoane. All rights reserved
-```
-
-Uploaded to private GitHub repository \[[1]\] and available since private Homebrew tap \[[2]\], using:
+1. Write a journal to keep track of an operating system update you just ran:
 
 ```sh
-brew install journal_writer
+jw -w 'OS update to 24.5.2'
 ```
 
+Output:
 
-<!-- References -->
+```
+0014. 2024-03-16 17:04:50,123 - test_username - OS update to 24.5.2.
+```
 
-[1]: https://github.com/bglezseoane/journal-writer
-[2]: https://github.com/bglezseoane/homebrew-private-tap
+2. Write a journal entry about a backup of the machine. Use a tag.
+
+```sh
+jw -w 'General system backup' && w -t BUP
+```
+
+Output:
+
+```
+0015. 2024-03-16 17:06:08,630 - test_username - General system backup. #BUP1
+```
+
+You could then use this same tag `BUP1` to also tag a commit in a Git repository with your machine config. This way your journal and your machine config are paired.
+
+### The journal file
+
+Basically, each new journal entry is a new line in the journal file, with an index and a date. The index is useful to cross-reference the journal entries. The entries are appended to the journal file sequentially. The journal file location is defined in the environment variable `$JOURNAL` (or, by default in `~/.journal.md`). If the tool cannot reach the file, the incoming entries are stored in an emergency journal file, which location is `$JOURNAL_EMERGENCY`, if defined, or `~/.journal_emergency.md`, otherwise. This is useful if, for example, the journal file is located in a remote file system or cloud provider and the connection is lost. The user can then manually arrange the journal entries merging the emergency journal.
+
+In addition to the entries, the tool also handle tags, like `#backup1`, to an easier navigation of the journal file. This is specially useful to link the journal entries with tags in a configuration Git repository, for example, because a journal tag can be also set in the repo.
+
+Journal format is Markdown, so the user can also export all the history to a more readable format, like a PDF, using a Markdown to PDF converter.
+
+After some time, the user can obtain with Jour a high-level traceability of the machine changes and fixes, helping even to debug some issues or roll back to a previous state.
+
+## Installation
+
+### Homebrew
+
+First add Jour author's public [tap](https://github.com/bglezseoane/homebrew-tap):
+
+```sh
+brew tap bglezseoane/tap
+```
+
+Then install Jour with:
+
+```sh
+brew install jour
+```
+
+### PyPI
+
+This tool is [publicly available in PyPI](https://pypi.org/project/jour), so you could use any method that consumes this registry to install it (like `pip`). As a recommendation, you could use PipX:
+
+```
+pipx install jour
+
+# Or...
+pip install jour
+```

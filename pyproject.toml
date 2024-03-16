@@ -1,0 +1,134 @@
+[build-system]
+build-backend = "poetry.core.masonry.api"
+requires = [
+    "poetry-core",
+]
+
+[tool.autoflake]
+in-place = true
+recursive = true
+remove-all-unused-imports = true
+
+[tool.black]
+target-version = [
+    "py311",
+]
+
+[tool.coverage.run]
+omit = [
+    "*/__main__.py",
+]
+
+[tool.isort]
+profile = "black"
+
+[tool.poe.tasks.format]
+help = "Run all formating tools on the base"
+sequence = [
+    "format_autoflake",
+    "format_black",
+    "format_blacken_docs",
+    "format_isort",
+    "format_mdformat",
+    "format_pyprojectsort",
+]
+
+[tool.poe.tasks.format_autoflake]
+help = "Run AutoFlake on the base"
+sequence = [
+    { cmd = "autoflake ." },
+]
+
+[tool.poe.tasks.format_black]
+help = "Run Black on the base"
+sequence = [
+    { cmd = "black ." },
+]
+
+[tool.poe.tasks.format_blacken_docs]
+help = "Run Blacken-Docs on the base"
+ignore_fail = "return_zero"
+sequence = [
+    { shell = "git ls-files -z -- '*.md' | xargs -0 blacken-docs" },
+    { shell = "git ls-files -z -- '*.py' | xargs -0 blacken-docs" },
+]
+
+[tool.poe.tasks.format_isort]
+help = "Run iSort on the base"
+sequence = [
+    { cmd = "isort ." },
+]
+
+[tool.poe.tasks.format_mdformat]
+help = "Run Mdformat on the read-me file"
+ignore_fail = "return_zero"
+sequence = [
+    { cmd = "mdformat --number --wrap=keep README.md" },
+]
+
+[tool.poe.tasks.format_pyprojectsort]
+help = "Run `pyprojectsort` on the `pyproject.toml` file"
+ignore_fail = "return_zero"
+sequence = [
+    { cmd = "pyprojectsort pyproject.toml" },
+]
+
+[tool.poe.tasks.test]
+cmd = "pytest --cov=jour --cov-report=term --cov-report=xml:cov.xml"
+help = "Run tests with coverage report"
+
+[tool.poe.tasks.test_quick]
+cmd = "pytest -m \"not slow\""
+help = "Run tests, excluding slow ones and without coverage"
+
+[tool.poetry]
+authors = [
+    "Borja González Seoane <borja@glezseoane.es>",
+]
+classifiers = [
+    "Intended Audience :: End Users/Desktop",
+    "Intended Audience :: Information Technology",
+    "Operating System :: OS Independent",
+    "Operating System :: POSIX",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: System :: Logging",
+    "Topic :: Utilities",
+]
+description = "An utility for a high-level machine maintenance journal"
+keywords = [
+    "configuration",
+    "journal",
+    "journaling",
+    "machine-administration",
+    "machine-maintenance",
+    "markdown",
+]
+license = "LICENSE"
+name = "jour"
+readme = "README.md"
+repository = "https://github.com/bglezseoane/jour"
+version = "2.0.0"
+
+[tool.poetry.dependencies]
+ilock = "^1.0.3"
+mdformat = "^0.7.17"
+python = "^3.11"
+
+[tool.poetry.group.dev.dependencies]
+autoflake = "^2.2.1"
+black = "^23.10.1"
+blacken-docs = "^1.16.0"
+isort = "^5.12.0"
+poethepoet = "^0.24.1"
+pyprojectsort = "^0.3.0"
+pytest = "^7.4.3"
+pytest-cov = "^4.1.0"
+
+[tool.poetry.scripts]
+jour = "jour.__main__:main"
+
+[tool.pytest.ini_options]
+markers = [
+    "serial",
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+]
