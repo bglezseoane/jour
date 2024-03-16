@@ -85,10 +85,28 @@ help = "Run tests, excluding slow ones and without coverage"
 authors = [
     "Borja González Seoane <borja@glezseoane.es>",
 ]
+classifiers = [
+    "Intended Audience :: End Users/Desktop",
+    "Intended Audience :: Information Technology",
+    "Operating System :: OS Independent",
+    "Operating System :: POSIX",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: System :: Logging",
+    "Topic :: Utilities",
+]
 description = "An utility for a high-level machine maintenance journal"
+keywords = [
+    "configuration",
+    "journal",
+    "journaling",
+    "machine-administration",
+    "machine-maintenance",
+    "markdown",
+]
 license = "All rights reserved"
 name = "journal-writer"
 readme = "README.md"
+repository = "https://github.com/bglezseoane/journal-writer"
 version = "1.1.0"
 
 [tool.poetry.dependencies]
