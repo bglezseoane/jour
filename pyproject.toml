@@ -103,7 +103,7 @@ keywords = [
     "machine-maintenance",
     "markdown",
 ]
-license = "All rights reserved"
+license = "LICENSE"
 name = "journal-writer"
 readme = "README.md"
 repository = "https://github.com/bglezseoane/journal-writer"
