@@ -70,8 +70,7 @@ class TestJour(unittest.TestCase):
     def test_write_line_and_file_dumping(self):
         """
         Test that the `write_line` method appends a new line to the journal file. The journal file
-        is created, so actually two lines should be present in the journal file. Implicitly, this
-        test also checks that the Markdown format custom fixes are applied to the journal file.
+        is created, so actually two lines should be present in the journal file.
         """
         with Jour(create_journal=True) as jw:
             jw.write_line("Test message")
@@ -81,7 +80,7 @@ class TestJour(unittest.TestCase):
         with open(self.journal_file, "r") as f:
             dumped_lines = f.readlines()
         for i, line in enumerate(dumped_lines):
-            self.assertTrue(line.startswith(f"000{i+1}"))
+            self.assertTrue(line.startswith(f"{i+1}"))
             if i == 0:
                 self.assertIn("Create this journal", line)
             else:
@@ -147,7 +146,7 @@ class TestJour(unittest.TestCase):
                 # Check that the last 10 lines are printed. The lines should start by `  00ii`, where
                 # `ii` is the line number; and end with `Message ii.\n`
                 for i in range(15, 25):
-                    self.assertIn(f"  00{i+1}", mock_logger.call_args[0][0])
+                    self.assertIn(f"  {i+1}", mock_logger.call_args[0][0])
                     self.assertIn(f"Message {i+1}.\n", mock_logger.call_args[0][0])
 
     def test_custom_signature(self):
@@ -173,7 +172,7 @@ class TestJour(unittest.TestCase):
 
             # Add a line to the journal
             jw.write_line("Test message")
-            self.assertTrue(jw._journal[-1].startswith("0001. "))
+            self.assertTrue(jw._journal[-1].startswith("1. "))
             self.assertIn("Test message", jw._journal[-1])
 
     def test_using_empty_file_as_journal(self):
@@ -194,7 +193,7 @@ class TestJour(unittest.TestCase):
 
             # Try to write a line to the journal
             jw.write_line("Test message")
-            self.assertTrue(jw._journal[-1].startswith("0001. "))
+            self.assertTrue(jw._journal[-1].startswith("1. "))
             self.assertIn("Test message", jw._journal[-1])
 
     def test_messages_formatting(self):
@@ -206,7 +205,7 @@ class TestJour(unittest.TestCase):
 
             # The line should be in format:
             # `0001. DD-MM-YYYY HH:MM:SS,sss - Testing Custom Author - This is a test message.`
-            self.assertEqual("0002", jw._journal[-1].split(".")[0])
+            self.assertEqual("2", jw._journal[-1].split(".")[0])
             self.assertEqual(
                 datetime.datetime.now().strftime("%Y-%m-%d %H"),
                 jw._journal[-1]
@@ -218,6 +217,32 @@ class TestJour(unittest.TestCase):
             self.assertEqual(
                 "This is a test message.\n", jw._journal[-1].split(" - ")[2]
             )
+
+    def test_index_formatting_is_correct(self):
+        """
+        Test that the numerical index of the journal lines is correctly formatted. When dumping the
+        journal to a file, the index should be padded with zeros to have a fixed length of the length
+        of the highest index.
+        """
+        with Jour(create_journal=True) as jw:
+            for _ in range(1, 20):
+                jw.write_line("Test message")
+
+            for i, line in enumerate(jw._journal):
+                if i < 9:
+                    self.assertEqual(f"{i+1}", line.split(".")[0])
+                else:
+                    self.assertEqual(f"{i+1}", line.split(".")[0])
+
+        # Check when indexes of one and two digits are used, because the padding should be adapted to
+        # the length of the highest index when dumping the journal to a file
+        with open(self.journal_file, "r") as f:
+            dumped_lines = f.readlines()
+        for i, line in enumerate(dumped_lines):
+            if i < 9:
+                self.assertEqual(f"0{i+1}", line.split(".")[0])
+            else:
+                self.assertEqual(f"{i+1}", line.split(".")[0])
 
     def test_use_as_command_formatting(self):
         """

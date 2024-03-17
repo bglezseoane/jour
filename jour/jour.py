@@ -100,16 +100,6 @@ class Jour:
             "".join(self._journal), options={"number": True, "wrap": "keep"}
         )
 
-        # However Mdformat's, preserve the line index format with four digits, that is considered
-        # here as a particularity of the type of file to facilitate reading
-        now = datetime.datetime.now().strftime(
-            "%Y-%m"
-        )  # Used for protect the following replacement, affecting only the line index and not other possible numbers in the journal
-        for i, _ in enumerate(journal_fmt.split("\n")):
-            journal_fmt = journal_fmt.replace(
-                f"{i+1}. {now}", f"{str(i+1).zfill(4)}. {now}"
-            )
-
         with self._journal_lock:
             # Write the journal back to the file
             with open(self._active_journal_file, "w") as f:
@@ -312,9 +302,6 @@ class Jour:
         # Calculate the next index
         if index is None:
             index = self.__calculate_next_line_index()
-
-        # Fix next index to have a fixed length
-        index = str(index).zfill(4)
 
         # Solve signature
         if not signature:
