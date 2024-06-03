@@ -2,7 +2,7 @@
 Main
 ====
 
-This module is the main entry point for the `jw` command line utility. It uses the
+This module is the main entry point for the `jour` command line utility. It uses the
 `argparse` module to parse the command line arguments and the `Jour` class
 to access the functionality.
 """
@@ -27,7 +27,7 @@ logger.addHandler(handler)
 def parse_args():
     # Define the parser
     parser = argparse.ArgumentParser(
-        prog="jw",
+        prog="jour",
         description="An utility for a high-level machine maintenance journal. Uses the file defined in `JOURNAL` environment variable as the journal file location",
         epilog="© Borja González Seoane",
     )
@@ -131,32 +131,32 @@ def main():
         return
 
     # Create a `Jour` object
-    jw = Jour(create_journal=args.create_journal)
+    jour = Jour(create_journal=args.create_journal)
 
     # Enter context an run the command
-    with jw:
+    with jour:
         if args.write:
-            jw.write_line(
+            jour.write_line(
                 args.MESSAGE_OR_TAG,
                 as_command=args.as_command,
                 signature=args.signature,
                 printing=True,
             )
         elif args.append:
-            jw.append_to_last_line(
+            jour.append_to_last_line(
                 args.MESSAGE_OR_TAG, as_command=args.as_command, printing=True
             )
         elif args.tag:
-            jw.tag_last_line(args.MESSAGE_OR_TAG, printing=True)
+            jour.tag_last_line(args.MESSAGE_OR_TAG, printing=True)
 
         elif args.return_tag:
-            jw.get_next_tag(args.MESSAGE_OR_TAG, printing=True)
+            jour.get_next_tag(args.MESSAGE_OR_TAG, printing=True)
 
         elif args.remove:
-            jw.remove_last_line()
+            jour.remove_last_line()
 
         else:  # Default
-            jw.print_journal()
+            jour.print_journal()
 
 
 if __name__ == "__main__":
