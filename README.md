@@ -4,10 +4,10 @@ This repository contains the Jour tool, an utility for a high-level machine main
 
 Some examples of the usage of this tool could be:
 
-1. Write a journal to keep track of an operating system update you just ran:
+1. Write a journal entry to register an OS update. Just run the following command in the terminal:
 
 ```sh
-jw -w 'OS update to 24.5.2'
+jour --write 'OS update to 24.5.2'
 ```
 
 Output:
@@ -16,10 +16,10 @@ Output:
 0014. 2024-03-16 17:04:50,123 - test_username - OS update to 24.5.2.
 ```
 
-2. Write a journal entry about a backup of the machine. Use a tag.
+2. Write a journal entry about a backup of the machine. Use a Jour tag.
 
 ```sh
-jw -w 'General system backup' && w -t BUP
+jour --write 'General system backup' && jour --tag 'BUP'
 ```
 
 Output:
@@ -28,13 +28,25 @@ Output:
 0015. 2024-03-16 17:06:08,630 - test_username - General system backup. #BUP1
 ```
 
-You could then use this same tag `BUP1` to also tag a commit in a Git repository with your machine config. This way your journal and your machine config are paired.
+3. Register other backup some time later. Use the same tag. Take into account that the tag index is automatically incremented, like the entry index.
+
+```sh
+jour --write 'General system backup' && jour --tag 'BUP'
+```
+
+Output:
+
+```
+0016. 2024-03-16 17:09:14,123 - test_username - General system backup. #BUP2
+```
+
+You could then use these same tags `BUP1`, `BUP2`, etc. to also tag a commit in a Git repository with your machine config or dotfiles. This way your Jour journal and your machine config are paired.
 
 ### The journal file
 
-Basically, each new journal entry is a new line in the journal file, with an index and a date. The index is useful to cross-reference the journal entries. The entries are appended to the journal file sequentially. The journal file location is defined in the environment variable `$JOURNAL` (or, by default in `~/.journal.md`). If the tool cannot reach the file, the incoming entries are stored in an emergency journal file, which location is `$JOURNAL_EMERGENCY`, if defined, or `~/.journal_emergency.md`, otherwise. This is useful if, for example, the journal file is located in a remote file system or cloud provider and the connection is lost. The user can then manually arrange the journal entries merging the emergency journal.
+Basically, each new journal entry is a new line in the journal file, with an index and a date. The index is useful to cross-reference the journal entries. The entries are appended to the journal file sequentially. The journal file location is defined in the environment variable `$JOURNAL` (or, by default in `~/journal.md`). If the tool cannot reach the file, the incoming entries are stored in an emergency journal file, which location is `$JOURNAL_EMERGENCY`, if defined, or `~/journal_emergency.md`, otherwise. This is useful if, for example, the journal file is located in a remote file system or cloud provider and the connection is lost. The user can then manually arrange the journal entries merging the emergency journal.
 
-In addition to the entries, the tool also handle tags, like `#backup1`, to an easier navigation of the journal file. This is specially useful to link the journal entries with tags in a configuration Git repository, for example, because a journal tag can be also set in the repo.
+In addition to the entries, like explained before, the tool also handle tags, like `#BUP1`, to an easier navigation of the journal file. This is specially useful to link the journal entries with tags in a configuration Git repository, for example, because a journal tag can be also set in the repo.
 
 Journal format is Markdown, so the user can also export all the history to a more readable format, like a PDF, using a Markdown to PDF converter.
 
