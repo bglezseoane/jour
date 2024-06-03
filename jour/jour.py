@@ -80,7 +80,7 @@ class Jour:
         )  # Debug level
 
         self._journal_lock = ILock(
-            f"jw_lock_{self._active_journal_file.name}", reentrant=True, timeout=10
+            f"jour_lock_{self._active_journal_file.name}", reentrant=True, timeout=10
         )
         with self._journal_lock:
             # Load the journal file to memory
